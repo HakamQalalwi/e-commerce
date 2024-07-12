@@ -1,18 +1,17 @@
 const CategoryModel = require("../models/categoryModel");
+const asyncHandler = require("express-async-handler");
+const slugify = require("slugify");
 
 exports.getCategories = (req, res) => {
+  // const name = req.body.name;
+
+  // console.log(req.body);
+  res.send();
+};
+
+exports.craeteCategory = asyncHandler(async (req, res) => {
   const name = req.body.name;
 
-  console.log(req.body);
-
-  const newCategory = new CategoryModel({ name });
-  newCategory
-    .save()
-    .then((doc) => {
-      res.json(doc);
-    })
-    .catch((err) => {
-      console.error(`Error saving to database: ${err}`);
-      res.status(500).json({ error: "Error saving to database" });
-    });
-};
+  const category = await CategoryModel.create({ name, slug: slugify(name) });
+  res.status(201).json({ data: category });
+});
