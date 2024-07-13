@@ -14,8 +14,10 @@ const {
   deleteCategory,
 } = require("../services/categoryService");
 
+const subcategoriesRoute = require("./subCategoryRoute");
 const router = express.Router();
 
+router.use("/:categoryId/subcategories", subcategoriesRoute);
 router
   .route("/")
   .get(getCategories)

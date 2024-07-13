@@ -3,6 +3,10 @@ const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiError");
 const slugify = require("slugify");
 
+exports.setCategoryIdToBody = (req, res, next) => {
+  if (!req.body.category) req.body.category = req.params.categoryId;
+  next();
+};
 // @route POST /api/v1/subcategories
 exports.createSubCategory = asyncHandler(async (req, res) => {
   const { name, category } = req.body;
@@ -14,16 +18,23 @@ exports.createSubCategory = asyncHandler(async (req, res) => {
   res.status(201).json({ data: subCategory });
 });
 
+// GET /api/v1/categories/:categoryId/subcategories
+exports.createFilterObj = (req, res, next) => {
+  let filterObject = {};
+  if (req.params.categoryId) filterObject = { category: req.params.categoryId };
+  req.filterObj = filterObject;
+  next();
+};
 
 // @route GET /api/v1/subcategories
 exports.getSubCategories = asyncHandler(async (req, res) => {
   const page = req.query.page * 1 || 1;
   const limit = req.query.limit * 1 || 5;
   const skip = (page - 1) * limit;
-  const subCategories = await SubCategory.find({})
+  const subCategories = await SubCategory.find(req.filterObj)
     .skip(skip)
-    .limit(limit)
-    .populate({ path: "category", select: "name -_id" });
+    .limit(limit);
+  // .populate({ path: "category", select: "name -_id" });
   res
     .status(200)
     .json({ results: subCategories.length, page, data: subCategories });
@@ -32,10 +43,11 @@ exports.getSubCategories = asyncHandler(async (req, res) => {
 // @route GET /api/v1/subcategories/:id
 exports.getSubCategory = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const subCategory = await SubCategory.findById(id).populate({
-    path: "category",
-    select: "name -_id",
-  });
+  const subCategory = await SubCategory.findById(id);
+  // .populate({
+  //   path: "category",
+  //   select: "name -_id",
+  // });
   if (!subCategory) {
     return next(new ApiError(`No sub Category for this id ${id}`, 404));
   }
