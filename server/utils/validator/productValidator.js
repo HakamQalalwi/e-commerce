@@ -57,47 +57,12 @@ exports.createProductValidator = [
     .notEmpty()
     .withMessage("Product must be belong to a category")
     .isMongoId()
-    .withMessage("Invalid ID formate")
-    .custom((categoryId) =>
-      Category.findById(categoryId).then((category) => {
-        if (!category) {
-          return Promise.reject(
-            new Error(`No category for this id: ${categoryId}`)
-          );
-        }
-      })
-    ),
+    .withMessage("Invalid ID formate"),
 
   check("subcategories")
     .optional()
     .isMongoId()
-    .withMessage("Invalid ID formate")
-    .custom((subcategoriesIds) =>
-      SubCategory.find({ _id: { $exists: true, $in: subcategoriesIds } }).then(
-        (result) => {
-          if (result.length < 1 || result.length !== subcategoriesIds.length) {
-            return Promise.reject(new Error(`Invalid subcategories Ids`));
-          }
-        }
-      )
-    )
-    .custom((val, { req }) =>
-      SubCategory.find({ category: req.body.category }).then(
-        (subcategories) => {
-          const subCategoriesIdsInDB = [];
-          subcategories.forEach((subCategory) => {
-            subCategoriesIdsInDB.push(subCategory._id.toString());
-          });
-          // check if subcategories ids in db include subcategories in req.body (true)
-          const checker = (target, arr) => target.every((v) => arr.includes(v));
-          if (!checker(val, subCategoriesIdsInDB)) {
-            return Promise.reject(
-              new Error(`subcategories not belong to category`)
-            );
-          }
-        }
-      )
-    ),
+    .withMessage("Invalid ID formate"),
 
   check("brand").optional().isMongoId().withMessage("Invalid ID formate"),
   check("ratingsAverage")
@@ -123,12 +88,6 @@ exports.getProductValidator = [
 
 exports.updateProductValidator = [
   check("id").isMongoId().withMessage("Invalid ID formate"),
-  body("title")
-    .optional()
-    .custom((val, { req }) => {
-      req.body.slug = slugify(val);
-      return true;
-    }),
   validatorMiddleware,
 ];
 
