@@ -11,6 +11,11 @@ const productSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
+      required: true,
+      lowercase: true,
+    },
+    description: {
+      type: String,
       required: [true, "Product description is required"],
       minlength: [20, "Too short product description"],
     },
