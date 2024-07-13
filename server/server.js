@@ -6,6 +6,7 @@ dotenv.config({ path: "config.env" });
 const ApiError = require("./utils/apiError");
 const dbConnection = require("./config/database");
 const categoryRoute = require("./routes/categoryRoute");
+const subCategoryRoute = require("./routes/subCategoryRoute");
 const globalError = require("./middleware/errorMiddleware");
 
 dbConnection();
@@ -20,6 +21,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use("/api/v1/categories", categoryRoute);
+app.use("/api/v1/subcategories", subCategoryRoute);
 
 app.all("*", (req, res, next) => {
   next(new ApiError(`Can't find this route: ${req.originalUrl}`, 400));
@@ -31,6 +33,7 @@ const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => {
   console.log(`App running on port ${PORT}`);
 });
+
 
 // Handle rejection outside express
 process.on("unhandledRejection", (err) => {
