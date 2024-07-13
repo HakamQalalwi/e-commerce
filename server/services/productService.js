@@ -32,9 +32,11 @@ exports.craeteProduct = asyncHandler(async (req, res) => {
 
 // @route PUT /api/v1/products/:id
 exports.updateProduct = asyncHandler(async (req, res, next) => {
-  req.body.slug = slugify(req.body.title);
+  const { id } = req.params;
 
-  const product = await Category.findOneAndUpdate({ _id: id }, req.body, {
+  if (req.body.title) req.body.slug = slugify(req.body.title);
+
+  const product = await Product.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
   });
   if (!product) {
