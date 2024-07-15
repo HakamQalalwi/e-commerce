@@ -8,7 +8,7 @@ const {
 
 const {
   getProducts,
-  craeteProduct,
+  createProduct,
   getProduct,
   updateProduct,
   deleteProduct,
@@ -16,7 +16,7 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getProducts).post(createProductValidator, craeteProduct);
+router.route("/").get(getProducts).post(createProductValidator, createProduct);
 router
   .route("/:id")
   .get(getProductValidator, getProduct)

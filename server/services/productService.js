@@ -21,9 +21,18 @@ exports.getProducts = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   // Build query
-  const mongooseQuery = Product.find(JSON.parse(queryStr))
+  let mongooseQuery = Product.find(JSON.parse(queryStr))
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .populate({ path: "category", select: "name -_id" });
+
+  // Sorting
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join("");
+    mongooseQuery = mongooseQuery.sort(sortBy);
+  } else {
+    mongooseQuery = mongooseQuery.sort("-createdAt");
+  }
 
   //Execute query
   const products = await mongooseQuery;
@@ -41,7 +50,7 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 });
 
 // @route POST /api/v1/products
-exports.craeteProduct = asyncHandler(async (req, res) => {
+exports.createProduct = asyncHandler(async (req, res) => {
   req.body.slug = slugify(req.body.title);
   const product = await Product.create(req.body);
   res.status(201).json({ data: product });
