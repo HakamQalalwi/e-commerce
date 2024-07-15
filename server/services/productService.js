@@ -28,10 +28,18 @@ exports.getProducts = asyncHandler(async (req, res) => {
 
   // Sorting
   if (req.query.sort) {
-    const sortBy = req.query.sort.split(",").join("");
+    const sortBy = req.query.sort.split(",").join(" ");
     mongooseQuery = mongooseQuery.sort(sortBy);
   } else {
     mongooseQuery = mongooseQuery.sort("-createdAt");
+  }
+  // console.log(req.query.fields);
+  // Fields Limiting
+  if (req.query.fields) {
+    const fields = req.query.fields.split(",").join(" ");
+    mongooseQuery = mongooseQuery.select(fields);
+  } else {
+    mongooseQuery = mongooseQuery.select("-__v");
   }
 
   //Execute query
