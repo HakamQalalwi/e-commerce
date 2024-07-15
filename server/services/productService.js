@@ -6,10 +6,27 @@ const slugify = require("slugify");
 // @route GET /api/v1/products
 
 exports.getProducts = asyncHandler(async (req, res) => {
+  // Filtering
+  const queryStringObj = { ...req.query };
+  const excludesFields = ["page", "sort", "limit", "fields"];
+  excludesFields.forEach((field) => delete queryStringObj[field]);
+
+  // FILTERATION FOR GREATER THAN OR LES THAN
+  let queryStr = JSON.stringify(queryStringObj);
+  queryStr = queryStr.replace(/(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+  // Pagination
   const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 5;
+  const limit = req.query.limit * 1 || 50;
   const skip = (page - 1) * limit;
-  const products = await Product.find({}).skip(skip).limit(limit);
+
+  // Build query
+  const mongooseQuery = Product.find(JSON.parse(queryStr))
+    .skip(skip)
+    .limit(limit);
+
+  //Execute query
+  const products = await mongooseQuery;
   res.status(200).json({ results: products.length, page, data: products });
 });
 
