@@ -9,16 +9,20 @@ const dbConnection = require("../config/database");
 
 exports.getProducts = asyncHandler(async (req, res) => {
   // Build query
+  const documentCounts = await Product.countDocuments();
   const apiFeatures = new ApiFeatures(Product.find(), req.query)
-    .paginate()
+    .paginate(documentCounts)
     .filter()
     .search()
     .limitFields()
     .sort();
 
   //Execute query
+  const { mongooseQuery, paginationResult } = apiFeatures;
   const products = await apiFeatures.mongooseQuery;
-  res.status(200).json({ results: products.length, data: products });
+  res
+    .status(200)
+    .json({ results: products.length, paginationResult, data: products });
 });
 
 // @route GET /api/v1/products/:id
