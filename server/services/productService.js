@@ -4,6 +4,7 @@ const ApiError = require("../utils/apiError");
 const ApiFeatures = require("../utils/apiFeatures");
 const slugify = require("slugify");
 const dbConnection = require("../config/database");
+const factory = require("./handlersFactory");
 
 // @route GET /api/v1/products
 
@@ -58,11 +59,4 @@ exports.updateProduct = asyncHandler(async (req, res, next) => {
 });
 
 // @route DELETE /api/v1/products/:id
-exports.deleteProduct = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const product = await Product.findByIdAndDelete(id);
-  if (!product) {
-    return next(new ApiError(`No product for this id ${id}`, 404));
-  }
-  res.status(204).send();
-});
+exports.deleteProduct = factory.deleteOne(Product);

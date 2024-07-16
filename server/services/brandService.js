@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiError");
 const slugify = require("slugify");
 const ApiFeatures = require("../utils/apiFeatures");
+const factory = require("./handlersFactory");
 
 // @route GET /api/v1/brands
 
@@ -59,11 +60,4 @@ exports.updateBrand = asyncHandler(async (req, res, next) => {
 });
 
 // @route DELETE /api/v1/brands/:id
-exports.deleteBrand = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const brand = await Brand.findByIdAndDelete(id);
-  if (!brand) {
-    return next(new ApiError(`No brand for this id ${id}`, 404));
-  }
-  res.status(204).send();
-});
+exports.deleteBrand = factory.deleteOne(Brand);
