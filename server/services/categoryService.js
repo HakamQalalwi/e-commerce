@@ -36,11 +36,7 @@ exports.getCategory = asyncHandler(async (req, res, next) => {
 });
 
 // @route POST /api/v1/categories
-exports.craeteCategory = asyncHandler(async (req, res) => {
-  const name = req.body.name;
-  const category = await Category.create({ name, slug: slugify(name) });
-  res.status(201).json({ data: category });
-});
+exports.craeteCategory = factory.createOne(Category);
 
 // @route PUT /api/v1/categories/:id
 exports.updateCategory = factory.updateOne(Category);

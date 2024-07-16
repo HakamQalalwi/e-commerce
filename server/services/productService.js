@@ -37,11 +37,7 @@ exports.getProduct = asyncHandler(async (req, res, next) => {
 });
 
 // @route POST /api/v1/products
-exports.createProduct = asyncHandler(async (req, res) => {
-  req.body.slug = slugify(req.body.title);
-  const product = await Product.create(req.body);
-  res.status(201).json({ data: product });
-});
+exports.createProduct = factory.createOne(Product);
 
 // @route PUT /api/v1/products/:id
 exports.updateProduct = factory.updateOne(Product);
