@@ -2,6 +2,7 @@ const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 const Category = require("../models/categoryModel");
 const factory = require("./handlersFactory");
+const ApiError = require("../utils/apiError");
 
 // Disk Storage engine
 const multerStorage = multer.diskStorage({
@@ -15,7 +16,15 @@ const multerStorage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: multerStorage });
+const multerFilter = function (req, file, cb) {
+  if (file.mimetype.startsWith("image")) {
+    cb(null, true);
+  } else {
+    cb(new ApiError("Only Image allowed", 400), false);
+  }
+};
+
+const upload = multer({ storage: multerStorage, fileFilter: multerFilter });
 
 exports.uploadCategoryImage = upload.single("image");
 // @route GET /api/v1/categories
