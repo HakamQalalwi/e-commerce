@@ -1,16 +1,10 @@
 const SubCategory = require("../models/subCategoryModel");
-const asyncHandler = require("express-async-handler");
-const ApiError = require("../utils/apiError");
-const slugify = require("slugify");
-const ApiFeatures = require("../utils/apiFeatures");
 const factory = require("./handlersFactory");
 
 exports.setCategoryIdToBody = (req, res, next) => {
   if (!req.body.category) req.body.category = req.params.categoryId;
   next();
 };
-// @route POST /api/v1/subcategories
-exports.createSubCategory = factory.createOne(SubCategory);
 
 // GET /api/v1/categories/:categoryId/subcategories
 exports.createFilterObj = (req, res, next) => {
@@ -20,25 +14,11 @@ exports.createFilterObj = (req, res, next) => {
   next();
 };
 
-// @route GET /api/v1/subcategories
-exports.getSubCategories = asyncHandler(async (req, res) => {
-  // Build query
-  const documentCounts = await SubCategory.countDocuments();
-  const apiFeatures = new ApiFeatures(SubCategory.find(), req.query)
-    .paginate(documentCounts)
-    .filter()
-    .search()
-    .limitFields()
-    .sort();
+// @route POST /api/v1/subcategories
+exports.createSubCategory = factory.createOne(SubCategory);
 
-  const { mongooseQuery, paginationResult } = apiFeatures;
-  const subCategories = await mongooseQuery;
-  res.status(200).json({
-    results: subCategories.length,
-    paginationResult,
-    data: subCategories,
-  });
-});
+// @route GET /api/v1/subcategories
+exports.getSubCategories = factory.getAll(SubCategory);
 
 // @route GET /api/v1/subcategories/:id
 exports.getSubCategory = factory.getOne(SubCategory);
