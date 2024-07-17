@@ -8,7 +8,7 @@ const ApiError = require("../utils/apiError");
 
 // // Disk Storage engine
 // const multerStorage = multer.diskStorage({
-//   destination: function (req, file, cb) {
+//   destination: function (req, file, cb) { 
 //     cb(null, "uploads/categories");
 //   },
 //   filename: function (req, file, cb) {
@@ -17,7 +17,7 @@ const ApiError = require("../utils/apiError");
 //     cb(null, filename);
 //   },
 // });
-
+ 
 // Memory storage engine
 const multerStorage = multer.memoryStorage();
 
@@ -40,6 +40,9 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
     .toFormat("jpeg")
     .jpeg({ quality: 95 })
     .toFile(`uploads/categories/${filename}`);
+
+    // Save image on database
+    req.body.image = filename;
 
   next();
 });

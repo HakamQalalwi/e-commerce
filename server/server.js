@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
@@ -5,11 +6,12 @@ const morgan = require("morgan");
 dotenv.config({ path: "config.env" });
 const ApiError = require("./utils/apiError");
 const dbConnection = require("./config/database");
+const globalError = require("./middleware/errorMiddleware");
+
 const categoryRoute = require("./routes/categoryRoute");
 const subCategoryRoute = require("./routes/subCategoryRoute");
 const productRoute = require("./routes/productRoute");
 const brandRouter = require("./routes/brandRoute");
-const globalError = require("./middleware/errorMiddleware");
 
 dbConnection();
 // express app
@@ -17,6 +19,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "uploads")));
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
   console.log(`mode: ${process.env.NODE_ENV}`);
@@ -37,7 +40,6 @@ const PORT = process.env.PORT || 8000;
 const server = app.listen(PORT, () => {
   console.log(`App running on port ${PORT}`);
 });
-
 
 // Handle rejection outside express
 process.on("unhandledRejection", (err) => {
