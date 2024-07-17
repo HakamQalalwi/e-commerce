@@ -27,14 +27,7 @@ exports.getProducts = asyncHandler(async (req, res) => {
 });
 
 // @route GET /api/v1/products/:id
-exports.getProduct = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const product = await Product.findById(id);
-  if (!product) {
-    return next(new ApiError(`No product for this id ${id}`, 404));
-  }
-  res.status(200).json({ data: product });
-});
+exports.getProduct = factory.getOne(Product);
 
 // @route POST /api/v1/products
 exports.createProduct = factory.createOne(Product);

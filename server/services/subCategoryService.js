@@ -41,18 +41,7 @@ exports.getSubCategories = asyncHandler(async (req, res) => {
 });
 
 // @route GET /api/v1/subcategories/:id
-exports.getSubCategory = asyncHandler(async (req, res, next) => {
-  const { id } = req.params;
-  const subCategory = await SubCategory.findById(id);
-  // .populate({
-  //   path: "category",
-  //   select: "name -_id",
-  // });
-  if (!subCategory) {
-    return next(new ApiError(`No sub Category for this id ${id}`, 404));
-  }
-  res.status(200).json({ data: subCategory });
-});
+exports.getSubCategory = factory.getOne(SubCategory);
 
 // @route PUT /api/v1/subcategories/:id
 exports.updateSubCategory = factory.updateOne(SubCategory);
