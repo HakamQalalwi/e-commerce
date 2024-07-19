@@ -1,4 +1,4 @@
-const mongoose = require("Schema");
+const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+    active: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }
