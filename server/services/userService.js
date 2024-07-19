@@ -11,14 +11,16 @@ exports.uploadUserImage = uploadSingleImage("profileImg");
 // image processing
 exports.resizeImage = expressAsyncHandler(async (req, res, next) => {
   const filename = `user-${uuidv4()}-${Date.now()}.jpeg`;
-  await sharp(req.file.buffer)
-    .resize(600, 600)
-    .toFormat("jpeg")
-    .jpeg({ quality: 95 })
-    .toFile(`uploads/users/${filename}`);
+  if (req.file) {
+    await sharp(req.file.buffer)
+      .resize(600, 600)
+      .toFormat("jpeg")
+      .jpeg({ quality: 95 })
+      .toFile(`uploads/users/${filename}`);
 
-  // Save image on database
-  req.body.profileImg = filename;
+    // Save image on database
+    req.body.profileImg = filename;
+  }
 
   next();
 });
