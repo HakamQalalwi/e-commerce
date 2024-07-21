@@ -20,7 +20,7 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
       .jpeg({ quality: 95 })
       .toFile(`uploads/users/${filename}`);
 
-    // Save image on database
+    // Save image on our database
     req.body.profileImg = filename;
   }
 
