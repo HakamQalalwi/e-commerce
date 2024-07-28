@@ -10,7 +10,7 @@ const bcrypt = require("bcryptjs");
 // Upload single image
 exports.uploadUserImage = uploadSingleImage("profileImg");
 
-// image processing
+// image processing method
 exports.resizeImage = asyncHandler(async (req, res, next) => {
   const filename = `user-${uuidv4()}-${Date.now()}.jpeg`;
   if (req.file) {
@@ -20,7 +20,7 @@ exports.resizeImage = asyncHandler(async (req, res, next) => {
       .jpeg({ quality: 95 })
       .toFile(`uploads/users/${filename}`);
 
-    // Save image on database
+    // Save image on our database
     req.body.profileImg = filename;
   }
 
