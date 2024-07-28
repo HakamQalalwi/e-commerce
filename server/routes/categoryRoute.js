@@ -28,6 +28,7 @@ router
   .get(getCategories)
   .post(
     authService.protect,
+    authService.allowedTo("admin", "manager"),
     uploadCategoryImage,
     resizeImage,
     createCategoryValidator,
