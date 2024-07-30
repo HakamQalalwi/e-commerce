@@ -20,6 +20,7 @@ const {
   getLoggedUserData,
   updateLoggedUserPassword,
   updateLoggedUserData,
+  deleteLoggedUserData,
 } = require("../services/userService");
 
 const router = express.Router();
@@ -30,6 +31,7 @@ router.use(authService.protect);
 router.get("/getMe", getLoggedUserData, getUser);
 router.put("/changeMyPassword", updateLoggedUserPassword);
 router.put("/updateMe", updateLoggedUserValidator, updateLoggedUserData);
+router.delete("/deleteMe", deleteLoggedUserData);
 
 router.use(authService.allowedTo("admin", "manager"));
 
