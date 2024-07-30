@@ -5,12 +5,8 @@ const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiError");
 const User = require("../models/userModel");
 const sendEmail = require("../utils/sendEmail");
+const createToken = require("../utils/createToken");
 
-const createToken = (paylod) => {
-  return jwt.sign({ userId: paylod }, process.env.JWT_SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRE_TIME,
-  });
-};
 
 // @route GET /api/v1/auth/signup
 // @access Public

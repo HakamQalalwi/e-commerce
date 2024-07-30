@@ -6,6 +6,7 @@ const sharp = require("sharp");
 const { v4: uuidv4 } = require("uuid");
 const ApiError = require("../utils/apiError");
 const bcrypt = require("bcryptjs");
+const createToken = require("../utils/createToken");
 
 // Upload single image
 exports.uploadUserImage = uploadSingleImage("profileImg");
@@ -81,15 +82,32 @@ exports.changeUserPassword = asyncHandler(async (req, res, next) => {
   res.status(200).json({ data: document });
 });
 
-
 // @route DELETE /api/v1/users/:id
 // @access Private
 exports.deleteUser = factory.deleteOne(User);
-
 
 // @route GET /api/v1/users/getMe
 // @access Private
 exports.getLoggedUserData = asyncHandler(async (req, res, next) => {
   req.params.id = req.user._id;
   next();
+});
+
+// @route PUT /api/v1/users/updateMyPassword
+// @access Private
+exports.updateLoggedUserPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      password: await bcrypt.hash(req.body.password, 12),
+      passwordChangedAt: Date.now(),
+    },
+    {
+      new: true,
+    }
+  );
+
+  const token = createToken(user._id);
+
+  res.status(200).json({ data: user, token });
 });

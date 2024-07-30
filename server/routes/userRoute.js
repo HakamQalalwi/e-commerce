@@ -17,12 +17,14 @@ const {
   resizeImage,
   changeUserPassword,
   getLoggedUserData,
+  updateLoggedUserPassword,
 } = require("../services/userService");
 
 const router = express.Router();
 const authService = require("../services/authService");
 
 router.get("/getMe", authService.protect, getLoggedUserData, getUser);
+router.put("/changeMyPassword", authService.protect, updateLoggedUserPassword);
 router.use(authService.protect, authService.allowedTo("admin", "manager"));
 
 router.put(
