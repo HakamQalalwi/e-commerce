@@ -16,10 +16,14 @@ const {
   uploadUserImage,
   resizeImage,
   changeUserPassword,
+  getLoggedUserData,
 } = require("../services/userService");
 
 const router = express.Router();
 const authService = require("../services/authService");
+
+router.get("/getMe", authService.protect, getLoggedUserData, getUser);
+router.use(authService.protect, authService.allowedTo("admin", "manager"));
 
 router.put(
   "/changePassword/:id",
@@ -29,36 +33,12 @@ router.put(
 
 router
   .route("/")
-  .get(authService.protect, authService.allowedTo("admin", "manager"), getUsers)
-  .post(
-    authService.protect,
-    authService.allowedTo("admin"),
-    uploadUserImage,
-    resizeImage,
-    createUserValidator,
-    craeteUser
-  );
+  .get(getUsers)
+  .post(uploadUserImage, resizeImage, createUserValidator, craeteUser);
 router
   .route("/:id")
-  .get(
-    authService.protect,
-    authService.allowedTo("admin"),
-    getUserValidator,
-    getUser
-  )
-  .put(
-    authService.protect,
-    authService.allowedTo("admin"),
-    uploadUserImage,
-    resizeImage,
-    updateUserValidator,
-    updateUser
-  )
-  .delete(
-    authService.protect,
-    authService.allowedTo("admin"),
-    deleteUserValidator,
-    deleteUser
-  );
+  .get(getUserValidator, getUser)
+  .put(uploadUserImage, resizeImage, updateUserValidator, updateUser)
+  .delete(deleteUserValidator, deleteUser);
 
 module.exports = router;
