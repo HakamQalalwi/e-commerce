@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const ApiError = require("../utils/apiError");
 const User = require("../models/userModel");
+const sendEmail = require("../utils/sendEmail");
 
 const createToken = (paylod) => {
   return jwt.sign({ userId: paylod }, process.env.JWT_SECRET_KEY, {
@@ -116,4 +117,23 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   user.passwordResetVerified = false;
 
   await user.save();
+
+  const message = `Hi ${user.name},\n We received a request to reset the password on your E-Shop Account. \n ${resetCode} \n Enter this code to complete the reset \n Thank You`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: "Your Password Reset Code (valid for 10 min)",
+      message: message,
+    });
+  } catch (err) {
+    user.passwordResetCode = undefined;
+    user.passwordResetExpires = undefined;
+    user.passwordResetVerified = undefined;
+    await user.save();
+    return next(new ApiError("There is an error in sending email", 500));
+  }
+  res
+    .status(200)
+    .json({ status: "Success", message: "Reset code ssent to email" });
 });
