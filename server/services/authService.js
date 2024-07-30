@@ -139,7 +139,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 });
 
 // @route POST /api/v1/auth/verifyResetCode
-// @access Private
+// @access Public
 exports.verifyPassResetCode = asyncHandler(async (req, res, next) => {
   const hashedResetCode = crypto
     .createHash("sha256")
@@ -159,4 +159,28 @@ exports.verifyPassResetCode = asyncHandler(async (req, res, next) => {
   await user.save();
 
   res.status(200).json({ status: "Success" });
+});
+
+
+// @route POST /api/v1/auth/resetPassword
+// @access Public
+exports.resetPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({email:req.body.email});
+  if(!user){
+    return next(new ApiError(`There is no user with email ${req.body.email}`, 404));
+  }
+
+  if(!user.passwordResetVerified){
+    return next(new ApiError("Reset Code Not Verified", 400));
+  } 
+
+  user.password = req.body.newPassword;
+  user.passwordResetCode = undefined;
+  user.passwordResetExpires = undefined;
+  user.passwordResetVerified = undefined;
+
+  await user.save();
+
+  const token = createToken(user._id);
+  res.status(200).json({token});
 });
