@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
@@ -56,7 +57,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
   }
   const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-
   const currentUser = await User.findById(decoded.userId);
   if (!currentUser) {
     return next(
@@ -86,8 +86,6 @@ exports.protect = asyncHandler(async (req, res, next) => {
   next();
 });
 
-
-
 exports.allowedTo = (...roles) =>
   asyncHandler(async (req, res, next) => {
     if (!roles.includes(req.user.role)) {
@@ -97,13 +95,25 @@ exports.allowedTo = (...roles) =>
     next();
   });
 
+// @route POST /api/v1/auth/forgotPassword
+// @access Private
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(
+      new ApiError(`There is no user with that email ${req.body.email}`, 404)
+    );
+  }
 
+  const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+  const hashedResetCode = crypto
+    .createHash("sha256")
+    .update(resetCode)
+    .digest("hex");
 
-  exports.forgotPassword = asyncHandler(async (req, res, next) => {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      return next(
-        new ApiError(`There is no user with that email ${req.body.email}`, 404)
-      );
-    }
-  });
+  user.passwordResetCode = hashedResetCode;
+  user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  user.passwordResetVerified = false;
+
+  user.save();
+});
