@@ -9,7 +9,7 @@ const {
 
 const {
   getCategories,
-  craeteCategory,
+  createCategory,
   getCategory,
   updateCategory,
   deleteCategory,
@@ -32,7 +32,7 @@ router
     uploadCategoryImage,
     resizeImage,
     createCategoryValidator,
-    craeteCategory
+    createCategory
   );
 router
   .route("/:id")

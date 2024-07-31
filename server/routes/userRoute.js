@@ -10,7 +10,7 @@ const {
 
 const {
   getUsers,
-  craeteUser,
+  createUser,
   getUser,
   updateUser,
   deleteUser,
@@ -44,7 +44,7 @@ router.put(
 router
   .route("/")
   .get(getUsers)
-  .post(uploadUserImage, resizeImage, createUserValidator, craeteUser);
+  .post(uploadUserImage, resizeImage, createUserValidator, createUser);
 router
   .route("/:id")
   .get(getUserValidator, getUser)

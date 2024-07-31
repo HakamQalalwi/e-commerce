@@ -8,7 +8,7 @@ const {
 
 const {
   getBrands,
-  craeteBrand,
+  createBrand,
   getBrand,
   updateBrand,
   deleteBrand,
@@ -29,7 +29,7 @@ router
     uploadBrandImage,
     resizeImage,
     createBrandValidator,
-    craeteBrand
+    createBrand
   );
 router
   .route("/:id")

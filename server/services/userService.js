@@ -38,7 +38,7 @@ exports.getUser = factory.getOne(User);
 
 // @route POST /api/v1/users
 // @access Private
-exports.craeteUser = factory.createOne(User);
+exports.createUser = factory.createOne(User);
 
 // @route PUT /api/v1/users/:id
 // @access Private

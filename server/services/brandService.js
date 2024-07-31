@@ -31,7 +31,7 @@ exports.getBrands = factory.getAll(Brand);
 // @route GET /api/v1/brands/:id
 exports.getBrand = factory.getOne(Brand);
 // @route POST /api/v1/brands
-exports.craeteBrand = factory.createOne(Brand);
+exports.createBrand = factory.createOne(Brand);
 
 // @route PUT /api/v1/brands/:id
 exports.updateBrand = factory.updateOne(Brand);

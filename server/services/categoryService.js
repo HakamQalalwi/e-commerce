@@ -32,7 +32,7 @@ exports.getCategories = factory.getAll(Category);
 exports.getCategory = factory.getOne(Category);
 
 // @route POST /api/v1/categories
-exports.craeteCategory = factory.createOne(Category);
+exports.createCategory = factory.createOne(Category);
 
 // @route PUT /api/v1/categories/:id
 exports.updateCategory = factory.updateOne(Category);
