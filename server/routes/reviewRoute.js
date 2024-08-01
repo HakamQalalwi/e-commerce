@@ -1,10 +1,10 @@
 const express = require("express");
-// const {
-//   getBrandValidator,
-//   createBrandValidator,
-//   updateBrandValidator,
-//   deleteBrandValidator,
-// } = require("../utils/validator/brandValidator");
+const {
+  // getReviewValidator,
+  createReviewValidator,
+  updateReviewValidator,
+  deleteReviewValidator,
+} = require("../utils/validator/reviewValidator");
 
 const {
   getReviews,
@@ -21,14 +21,25 @@ const router = express.Router();
 router
   .route("/")
   .get(getReviews)
-  .post(authService.protect, authService.allowedTo("user"), createReview);
+  .post(
+    authService.protect,
+    authService.allowedTo("user"),
+    createReviewValidator,
+    createReview
+  );
 router
   .route("/:id")
   .get(getReview)
-  .put(authService.protect, authService.allowedTo("user"), updateReview)
+  .put(
+    authService.protect,
+    authService.allowedTo("user"),
+    updateReviewValidator,
+    updateReview
+  )
   .delete(
     authService.protect,
     authService.allowedTo("user", "manager", "admin"),
+    deleteReviewValidator,
     deleteReview
   );
 
