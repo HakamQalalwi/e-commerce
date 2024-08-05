@@ -37,3 +37,15 @@ exports.removeProductFromWishlist = asyncHandler(async (req, res, next) => {
     data: user.wishlist,
   });
 });
+
+
+exports.getLoggedUserWishlist = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id).populate("wishlist");
+  res
+    .status(200)
+    .json({
+      status: "success",
+      results: user.wishlist.length,
+      data: user.wishlist,
+    });
+});
