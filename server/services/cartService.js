@@ -45,17 +45,43 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "Product added to cart successfully",
+    numOfCartItems: cart.cartItems.length,
     data: cart,
   });
 });
 
-
 // GET /api/v1/cart
 exports.getLoggedUserCart = asyncHandler(async (req, res, next) => {
-  const cart = await Cart.findOne({user: req.user._id});
-  if(!cart) {
-    return next(new ApiError(`There is no cart for this user id : ${req.user._id}`, 404));
+  const cart = await Cart.findOne({ user: req.user._id });
+  if (!cart) {
+    return next(
+      new ApiError(`There is no cart for this user id : ${req.user._id}`, 404)
+    );
   }
 
-  res.status(200).json({status: "success", numOfCartItems: cart.cartItems.length, data: cart})
+  res.status(200).json({
+    status: "success",
+    numOfCartItems: cart.cartItems.length,
+    data: cart,
+  });
+});
+
+// GET /api/v1/cart/:itemId
+exports.removeSpecificCartItem = asyncHandler(async (req, res, next) => {
+  const cart = await Cart.findOneAndUpdate(
+    { user: req.user._id },
+    {
+      $pull: { cartItems: { _id: req.params.itemId } },
+    },
+    { new: true }
+  );
+
+  calcTotalCartPrice(cart);
+  cart.save();
+
+  res.status(200).json({
+    status: "success",
+    numOfCartItems: cart.cartItems.length,
+    data: cart,
+  });
 });
