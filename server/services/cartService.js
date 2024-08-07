@@ -66,7 +66,7 @@ exports.getLoggedUserCart = asyncHandler(async (req, res, next) => {
   });
 });
 
-// GET /api/v1/cart/:itemId
+// DELETE /api/v1/cart/:itemId
 exports.removeSpecificCartItem = asyncHandler(async (req, res, next) => {
   const cart = await Cart.findOneAndUpdate(
     { user: req.user._id },
@@ -84,4 +84,11 @@ exports.removeSpecificCartItem = asyncHandler(async (req, res, next) => {
     numOfCartItems: cart.cartItems.length,
     data: cart,
   });
+});
+
+
+// DELETE /api/v1/cart
+exports.clearCart = asyncHandler(async (req, res, next) => {
+  await Cart.findOneAndDelete({ user: req.user._id })
+  res.status(200).send();
 });
