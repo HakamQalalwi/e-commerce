@@ -11,6 +11,7 @@ const dbConnection = require("./config/database");
 const globalError = require("./middleware/errorMiddleware");
 
 const mountRoutes = require("./routes");
+const { webhookCheckout } = require("./services/orderService");
 // const categoryRoute = require("./routes/categoryRoute");
 // const subCategoryRoute = require("./routes/subCategoryRoute");
 // const productRoute = require("./routes/productRoute");
@@ -30,6 +31,12 @@ app.use(cors());
 app.options("*", cors());
 
 app.use(compression());
+
+app.post(
+  "/webhook-checkout",
+  express.raw({ type: "application/json" }),
+  webhookCheckout
+);
 
 // Middleware
 app.use(express.json());
